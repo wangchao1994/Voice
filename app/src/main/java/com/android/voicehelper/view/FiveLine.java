@@ -40,7 +40,7 @@ public class FiveLine extends View {
         super(context, attrs);
         paint = new Paint(Paint.ANTI_ALIAS_FLAG);
         paint.setStrokeWidth(10);
-        paint.setColor(Color.parseColor("#ff0099cc"));
+        paint.setColor(Color.parseColor("#4923E0"));
     }
 
     public void initLine(float[] floats) {
