@@ -93,7 +93,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
         }
     }
-
     /**
          * 初始化Layout。
          */
@@ -133,21 +132,25 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         @Override
         public void onSpeakBegin() {
             //showTip("开始播放");
+            Log.d("ad","speakbegin");
         }
 
         @Override
         public void onSpeakPaused() {
             //showTip("暂停播放");
+            Log.d("wchao 180129","speanpaused");
         }
 
         @Override
         public void onSpeakResumed() {
             //showTip("继续播放");
+            Log.d("wchao 180129","speakresumed");
         }
 
         @Override
         public void onBufferProgress(int percent, int beginPos, int endPos,
                                      String info) {
+            Log.d("wchao 180129","percent= "+percent);
             // 合成进度
             //mPercentForBuffering = percent;
             //showTip(String.format(getString(R.string.tts_toast_format),
@@ -156,6 +159,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         @Override
         public void onSpeakProgress(int percent, int beginPos, int endPos) {
+            Log.d("wchao 180129","percent speak= "+percent);
             // 播放进度
             //mPercentForPlaying = percent;
             //showTip(String.format(getString(R.string.tts_toast_format),
@@ -241,11 +245,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         @Override
         public void onResult(final UnderstanderResult result) {
             if (null != result) {
-                Log.d(TAG, result.getResultString());
+                Log.d("wchao 180129", result.getResultString());
 
                 // 显示
                 String text = result.getResultString();
-                Log.e(TAG, text);
+                Log.e("wchao 180129", text);
                 mMainBean = JsonParser.parseIatResult(text);
 
 
@@ -267,7 +271,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         @Override
         public void onVolumeChanged(int volume, byte[] data) {
             //showTip("当前正在说话，音量大小：" + volume);
-            Log.d(TAG, data.length + "");
+            Log.d("wchao 180129", data.length + "");
         }
 
         @Override
@@ -275,12 +279,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             // 此回调表示：检测到了语音的尾端点，已经进入识别过程，不再接受语音输入
             //showTip("结束说话");
             heartProgressBar.dismiss();
+            Log.d("wchao 180129", "结束说话!");
         }
 
         @Override
         public void onBeginOfSpeech() {
             // 此回调表示：sdk内部录音机已经准备好了，用户可以开始语音输入
             //showTip("开始说话");
+            Log.d("wchao 180129", "开始说话!");
         }
 
         @Override
@@ -357,10 +363,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
 
         if (service_flag == false) {//如果不在一项服务中才进行服务的判断
-
-
             switch (service) {
-
                 case "telephone":
                     switch (operation) {
                         case "CALL": {    //1打电话
@@ -381,75 +384,54 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         default:
                             break;
                     }
-
                     break;
                 case "message": {//2 短信相关服务
-
                     switch (operation) {
-
                         case "SEND": {//1发送短信
                             SendMessage sendMessage = new SendMessage(slotsBean.getName(), slotsBean.getCode(), slotsBean.getContent(), MainActivity.this);
                             sendMessage.start();
                             break;
                         }
-
                         case "VIEW": {//2查看发送短信页面
-
                             MessageView messageView = new MessageView(this);
                             messageView.start();
                             break;
                         }
-
                         default:
                             break;
                     }
-
                     break;
                 }
                 case "app": {//3 应用相关服务
-
                     switch (operation) {
-
                         case "LAUNCH": {//1打开应用
                             OpenAppAction openApp = new OpenAppAction(slotsBean.getName(), MainActivity.this);
                             openApp.start();
                             break;
                         }
-
                         case "QUERY": {//2应用中心搜索应用
                             SearchApp searchApp = new SearchApp(slotsBean.getName(), this);
                             searchApp.start();
                             break;
                         }
-
                         default:
                             break;
-
                     }
                     break;
                 }
-
                 case "websearch": {//5 搜索相关服务
-
                     switch (operation) {
-
                         case "QUERY": {//1搜索
-
                             SearchAction searchAction = new SearchAction(slotsBean.getKeywords(), MainActivity.this);
                             searchAction.Search();
                             break;
                         }
-
                         default:
                             break;
-
                     }
-
                     break;
                 }
-
                 case "faq": {//6 社区问答相关服务
-
                     switch (operation) {
                         case "ANSWER": {//1社区问答
                             OpenQA openQA = new OpenQA(answerBean.getText(), this);
@@ -459,112 +441,71 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         default:
                             break;
                     }
-
                     break;
-
                 }
-
                 case "chat": {//7 聊天相关服务
-
                     switch (operation) {
-
                         case "ANSWER": {//1聊天模式
-
                             OpenQA openQA = new OpenQA(answerBean.getText(), this);
                             openQA.start();
-
                             break;
                         }
-
                         default:
                             break;
                     }
-
                     break;
                 }
-
                 case "openQA": {//8 智能问答相关服务
-
                     switch (operation) {
-
                         case "ANSWER": {//1智能问答
-
                             OpenQA openQA = new OpenQA(answerBean.getText(), this);
                             openQA.start();
-
                             break;
                         }
-
                         default:
                             break;
                     }
-
                     break;
                 }
-
                 case "baike": {//9 百科知识相关服务
-
                     switch (operation) {
-
                         case "ANSWER": {//1百科
-
                             OpenQA openQA = new OpenQA(answerBean.getText(), this);
                             openQA.start();
-
                             break;
                         }
-
                         default:
                             break;
                     }
-
                     break;
                 }
-
                 case "schedule": {//10 日程相关服务
-
                     switch (operation) {
-
                         case "CREATE": {//1创建日程/闹钟(直接跳转相应设置界面)
-
                             ScheduleCreate scheduleCreate = new ScheduleCreate(slotsBean.getName(), datetimeBean.getTime(), datetimeBean.getDate(), slotsBean.getContent(), this);
                             scheduleCreate.start();
-
                             break;
                         }
-
                         case "VIEW": {//1查看闹钟/日历(未实现)
-
                             ScheduleView scheduleView = new ScheduleView(slotsBean.getName(), datetimeBean.getTime(), datetimeBean.getDate(), slotsBean.getContent(), this);
                             scheduleView.start();
                             break;
                         }
-
-
                         default:
                             break;
                     }
-
                     break;
                 }
-
                 case "weather": {//11 天气相关服务
-
                     switch (operation) {
-
                         case "QUERY": {//1查询天气
-
                             SearchWeather searchWeather = new SearchWeather(date, resultBean.getCity(), resultBean.getSourceName(), resultBean.getDate(), resultBean.getWeather(), resultBean.getTempRange(), resultBean.getAirQuality(), resultBean.getWind(), resultBean.getHumidity(), resultBean.getWindLevel() + "", this);
                             searchWeather.start();
-
                             break;
                         }
-
                         default:
                             break;
-
                     }
-
                     break;
                 }
 
