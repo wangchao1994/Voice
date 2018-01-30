@@ -44,6 +44,10 @@ import com.iflytek.cloud.SpeechUnderstanderListener;
 import com.iflytek.cloud.SpeechUtility;
 import com.iflytek.cloud.SynthesizerListener;
 import com.iflytek.cloud.UnderstanderResult;
+import com.iflytek.cloud.VoiceWakeuper;
+import com.iflytek.cloud.WakeuperListener;
+import com.iflytek.cloud.WakeuperResult;
+import com.iflytek.cloud.util.ResourceUtil;
 import com.iflytek.sunflower.FlowerCollector;
 
 import java.util.Calendar;
@@ -62,6 +66,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     // 语音合成对象
     private SpeechSynthesizer mTts;
+    private VoiceWakeuper voiceWake;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,14 +75,54 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         setContentView(R.layout.activity_main);
         initStatusbar();
         SpeechUtility.createUtility(this, SpeechConstant.APPID + "=58057ac8");
+        voiceWake = VoiceWakeuper.createWakeuper(MainActivity.this, null);
         mToast = Toast.makeText(MainActivity.this, "", Toast.LENGTH_SHORT);
         //初始化对象
         mSpeechUnderstander = SpeechUnderstander.createUnderstander(MainActivity.this, mSpeechUdrInitListener);
 
         mTts = SpeechSynthesizer.createSynthesizer(MainActivity.this, mTtsInitListener);
+        initSet();
         initLayout();
+        voiceWake.startListening(mWakeuperListener);
+    }
+    /*
+         * 获取唤醒词等唤醒资源
+         * */
+    private String getResourse(){
+		/*
+		 * 加载唤醒资源
+		 * */
+        StringBuffer param = new StringBuffer();
+        String resPath = ResourceUtil.generateResourcePath(MainActivity.this,
+                ResourceUtil.RESOURCE_TYPE.assets,"ivw/"+getString(R.string.app_id)+".jet");
+        param.append(SpeechConstant.IVW_RES_PATH+"="+resPath);
+        param.append(","+ResourceUtil.ENGINE_START+"="+SpeechConstant.ENG_IVW);
+
+        return ResourceUtil.generateResourcePath(MainActivity.this,
+                ResourceUtil.RESOURCE_TYPE.assets, "ivw/"+getString(R.string.app_id)+".jet");
     }
 
+    /*
+	 * 初始化设置--语音理解对象，语音唤醒对象，语音合成对象
+	 * */
+    private void initSet() {
+        //语音理解设置
+        mSpeechUnderstander.setParameter(SpeechConstant.LANGUAGE, "zh_cn");
+        //语音合成设置
+        mTts.setParameter(SpeechConstant.VOICE_NAME, "xiaoyan");
+        mTts.setParameter(SpeechConstant.SPEED, "50");
+        mTts.setParameter(SpeechConstant.ENGINE_TYPE, SpeechConstant.TYPE_CLOUD);
+        //语音唤醒设置
+//		voiceWake.setParameter(SpeechConstant.IVW_THRESHOLD,"0"+-80);
+        voiceWake.setParameter(SpeechConstant.IVW_SST,"oneshot");
+        voiceWake.setParameter(SpeechConstant.ENGINE_TYPE,"cloud");
+//      voiceWake.setParameter(SpeechConstant.CLOUD_GRAMMAR, grammarID);
+        voiceWake.setParameter(SpeechConstant.IVW_THRESHOLD, "0:"+0);
+        voiceWake.setParameter(SpeechConstant.IVW_SST,"wakeup");
+        voiceWake.setParameter(SpeechConstant.KEEP_ALIVE, "0");
+        voiceWake.setParameter(SpeechConstant.IVW_NET_MODE,""+0);
+        voiceWake.setParameter(SpeechConstant.IVW_RES_PATH,getResourse());
+    }
     private void initStatusbar() {
         if (Build.VERSION.SDK_INT >= 21) {
             View decorView = getWindow().getDecorView();
@@ -93,6 +138,40 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
         }
     }
+    /*
+	 * 唤醒监听器
+	 * */
+    private WakeuperListener mWakeuperListener = new WakeuperListener(){
+
+        @Override
+        public void onEvent(int eventType, int arg1, int arg2, Bundle obj) {
+
+        }
+
+        @Override
+        public void onResult(WakeuperResult results) {
+
+        }
+
+        @Override
+        public void onBeginOfSpeech() {
+            // TODO Auto-generated method stub
+
+        }
+
+        @Override
+        public void onError(SpeechError arg0) {
+            // TODO Auto-generated method stub
+
+        }
+
+        @Override
+        public void onVolumeChanged(int arg0) {
+            // TODO Auto-generated method stub
+
+        }
+    };
+
     /**
          * 初始化Layout。
          */
@@ -102,9 +181,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             heartProgressBar = (HeartProgressBar) findViewById(R.id.progressBar);
             mFiveLine = (FiveLine) findViewById(R.id.fiveLine);
 
-            mUnderstanderText.setText("我能帮您做些什么吗?");
+            mUnderstanderText.setText("我能帮你做些什么吗?");
             //mUnderstanderText.setVisibility(View.INVISIBLE);
-            speakAnswer("我能帮您做些什么吗?");
+            speakAnswer("我能帮你做些什么吗？");
 
             findViewById(R.id.start_understander).setOnClickListener(MainActivity.this);
         }
